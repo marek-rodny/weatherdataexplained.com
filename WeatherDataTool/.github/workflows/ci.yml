@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ "**" ]  # Run on all branches
   pull_request:
     branches: [ main, develop ]
   workflow_dispatch:
@@ -32,30 +32,35 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('WeatherDataTool/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
 
     - name: Install dependencies
       run: |
+        cd WeatherDataTool
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Install package
       run: |
+        cd WeatherDataTool
         pip install -e .
 
     - name: Lint with ruff
       run: |
+        cd WeatherDataTool
         ruff check src/ tests/ || true
 
     - name: Run tests
       run: |
+        cd WeatherDataTool
         pytest -v --tb=short --color=yes
 
     - name: Run tests with coverage
       if: matrix.python-version == '3.11'
       run: |
+        cd WeatherDataTool
         pytest --cov=weather_data_tool --cov-report=xml --cov-report=html
 
     - name: Upload coverage to artifacts
@@ -63,7 +68,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
-        path: htmlcov/
+        path: WeatherDataTool/htmlcov/
 
   lint:
     runs-on: ubuntu-latest
@@ -79,17 +84,21 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd WeatherDataTool
         python -m pip install --upgrade pip
         pip install black ruff mypy
 
     - name: Check formatting with black
       run: |
+        cd WeatherDataTool
         black --check src/ tests/
 
     - name: Lint with ruff
       run: |
+        cd WeatherDataTool
         ruff check src/ tests/
 
     - name: Type check with mypy
       run: |
+        cd WeatherDataTool
         mypy src/ || true
