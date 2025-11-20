@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+coverage.xml
+*.cover
+
+# Data files (keep structure, ignore content)
+data/raw/*.nc
+data/raw/*.grib
+data/raw/*.zarr
+data/processed/*.nc
+data/processed/*.grib
+outputs/*.png
+outputs/*.json
+outputs/*.html
+
+# xESMF regridding weights cache
+*.nc
+!configs/*.nc
+!tests/fixtures/*.nc
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+
+# Documentation builds
+docs/_build/
+site/
+
+# OS
+Thumbs.db
