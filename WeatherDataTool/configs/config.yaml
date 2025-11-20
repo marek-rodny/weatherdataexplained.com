@@ -1,0 +1,88 @@
+# WeatherDataTool Configuration
+
+# Regional presets
+regions:
+  europe:
+    lat_min: 30
+    lat_max: 72
+    lon_min: -25
+    lon_max: 45
+  conus:
+    lat_min: 25
+    lat_max: 50
+    lon_min: -125
+    lon_max: -65
+  global:
+    lat_min: -90
+    lat_max: 90
+    lon_min: -180
+    lon_max: 180
+
+# Reference grids for regridding
+reference_grids:
+  gfs_0p25:
+    resolution: 0.25
+    description: "GFS 0.25 degree grid"
+  gfs_0p5:
+    resolution: 0.5
+    description: "GFS 0.5 degree grid"
+  gfs_1p0:
+    resolution: 1.0
+    description: "GFS 1.0 degree grid"
+
+# Data providers
+providers:
+  gfs_opendap:
+    name: "NOAA GFS via NOMADS OPeNDAP"
+    type: opendap
+    # NOMADS OPeNDAP endpoint - provides recent GFS forecasts
+    base_url: "https://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs{date}/gfs_0p25_{cycle}z"
+    description: "GFS 0.25° forecast via OPeNDAP, recent runs only"
+    variables:
+      t2m: "tmp2m"
+      u10: "ugrd10m"
+      v10: "v10m"
+      msl: "msletmsl"
+      tp: "apcpsfc"
+    forecast_hours: [0, 6, 12, 18, 24, 48, 72, 120, 240]
+    cycles: ["00", "06", "12", "18"]
+
+  hrrr_zarr:
+    name: "HRRR via Herbie/Zarr"
+    type: zarr
+    # Using Herbie's cloud-optimized Zarr archives
+    base_url: "s3://hrrrzarr/sfc/{date}/{date}_{cycle}z_anl.zarr"
+    description: "HRRR CONUS model via cloud-optimized Zarr (AWS)"
+    variables:
+      t2m: "TMP:2 m above ground"
+      u10: "UGRD:10 m above ground"
+      v10: "VGRD:10 m above ground"
+      tp: "APCP:surface"
+    forecast_hours: [0, 1, 2, 3, 6, 12, 18]
+    cycles: ["00", "06", "12", "18"]
+    # Note: HRRR is CONUS only
+
+  gfs_aws:
+    name: "NOAA GFS via AWS Open Data"
+    type: opendap
+    # Alternative: AWS-hosted GFS data (more reliable than NOMADS)
+    base_url: "https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.{date}/{cycle}/atmos/gfs.t{cycle}z.pgrb2.0p25.f{fhour:03d}"
+    description: "GFS 0.25° via AWS S3 (GRIB2, requires index)"
+    note: "This is GRIB2 - requires cfgrib; kept for reference"
+    enabled: false
+    variables:
+      t2m: "t2m"
+      u10: "u10"
+      v10: "v10"
+      msl: "msl"
+      tp: "tp"
+
+# Default settings
+defaults:
+  provider: gfs_opendap
+  reference_grid: gfs_0p25
+  forecast_hour: 24
+  region: europe
+  output_format: netcdf4
+  compression: true
+  regrid_method: bilinear
